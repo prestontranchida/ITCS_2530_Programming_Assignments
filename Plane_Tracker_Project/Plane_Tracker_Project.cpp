@@ -134,6 +134,6 @@ int main()
 			cout << "Please enter a valid choice." << endl;
 			break;
 		}
-	} while (option != 3);//
+	} while (option != 3);
 	return 0;
 }

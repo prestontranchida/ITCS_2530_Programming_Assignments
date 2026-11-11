@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Week 1 - Coding Assigment.cpp">
+    <ClCompile Include="Plane_Tracker_Project.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
