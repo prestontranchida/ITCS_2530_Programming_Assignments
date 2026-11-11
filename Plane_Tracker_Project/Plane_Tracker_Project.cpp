@@ -2,7 +2,7 @@
 //11-8-26
 //Week 4 Assigment
 
-#include <iostream>.
+#include <iostream>
 #include <string>
 #include <iomanip>
 #include <fstream>
