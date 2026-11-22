@@ -7,6 +7,8 @@
 #include <iomanip>
 #include <fstream>
 using namespace std;
+// Week 6 - Aircraft observation category
+enum TrafficLevel { LIGHT, MODERATE, HEAVY };
 
 //Color Function
 //If color green set changes text to green else, back to default.
@@ -120,10 +122,43 @@ int calculation(int helicopters, int planes)
 	total = helicopters + planes;
 	return total;
 }
+// Week 6 - Store aircraft observations in an array
+void collectObservations(int observations[], int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		cout << "Enter aircraft count for observation "
+			<< i + 1 << ": ";
+		cin >> observations[i];
+
+		// Validate each entry
+		while (cin.fail() || observations[i] < 0)
+		{
+			cin.clear();
+			cin.ignore(200, '\n');
+
+			cout << "Please enter 0 or a positive number: ";
+			cin >> observations[i];
+		}
+	}
+}
+
+// Week 6 - Calculate the total from the array
+int calculateObservationTotal(int observations[], int size)
+{
+	int sum = 0;
+
+	for (int i = 0; i < size; i++)
+	{
+		sum = sum + observations[i];
+	}
+
+	return sum;
+}
 
 //report Function
 //Creates report to console and to report.txt file.
-void report(string name, string location, int planes, int helicopters, int total, double time)
+void report(string name, string location, int planes, int helicopters, int total, double time, int observationTotal)
 {
 	//Displays the output message with information that the user input.
 	cout << "Wow " << name << " you saw " << helicopters << " helicopters and " << planes << " planes fly over you in " << location << ". In total you saw " << total << " aircraft.That's very cool!!" << endl;
@@ -136,6 +171,8 @@ void report(string name, string location, int planes, int helicopters, int total
 	cout << setfill('.') << left << setw(35) << "Plane Count: " << right << " " << planes << endl;
 	cout << setfill('.') << left << setw(35) << "Helicopter Count: " << right << " " << helicopters << endl;
 	cout << setfill('.') << left << setw(35) << "Total Aircraft Count: " << right << " " << total << endl;
+	// Week 6 - Display total from the array
+	cout << setfill('.') << left << setw(35) << "Observation Total: " << right << " " << observationTotal << endl;
 	cout << fixed << setprecision(2); // Sets time to display 0.00
 	cout << setfill('.') << left << setw(35) << "Time outside: " << right << " " << time << endl;
 	cout << "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*" << endl;
@@ -149,6 +186,8 @@ void report(string name, string location, int planes, int helicopters, int total
 	outData << setfill('.') << left << setw(35) << "Plane Count: " << right << " " << planes << endl;
 	outData << setfill('.') << left << setw(35) << "Helicopter Count: " << right << " " << helicopters << endl;
 	outData << setfill('.') << left << setw(35) << "Total Aircraft Count: " << right << " " << total << endl;
+	// Week 6 - Display total from the array
+	outData << setfill('.') << left << setw(35) << "Observation Total: " << right << " " << observationTotal << endl;	
 	outData << fixed << setprecision(2); // Sets time to display 0.00
 	outData << setfill('.') << left << setw(35) << "Time outside: " << right << " " << time << endl;
 	outData << "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*" << endl;
@@ -162,6 +201,8 @@ int main()
 	string location, name;
 	int helicopters, planes, total, option;
 	double time;
+	// Week 6 - Store three aircraft observations
+	int observations[3] = { 0, 0, 0 };
 
 	//Call Banner Function
 	name = banner();
@@ -175,15 +216,25 @@ int main()
 		//Uses each case depending on the users input.
 		switch (option)
 		{
-		case 1: // Create new report
+		case 1: { // Create new report
 			// Call userInput Function
 			userInput(planes, helicopters, location, time);
-			
+
 			// Call calculation Function
 			total = calculation(helicopters, planes);
 
+			// Week 6 - Fill the aircraft observations array
+			collectObservations(observations, 3);
+
+			// Week 6 - Calculate and display the array total
+			int observationTotal = calculateObservationTotal(observations, 3);
+
+			cout << "Total aircraft across all 3 observations: "
+				<< observationTotal << endl;
+
+
 			// Call report Function
-			report(name, location, planes, helicopters, total, time);
+			report(name, location, planes, helicopters, total, time, observationTotal);
 
 			//compound conditionals
 			//If user inputs time greater than or equal to 1.30(hrs) and total (aircraft) greater than or eqal to 15, output thats alot message, else wow you saw a lot in a short time message.
@@ -192,16 +243,43 @@ int main()
 			else
 				cout << "Nice you saw a few planes and helicopters in a short ammount of time." << endl;
 			//If there are less helicopters than planes or more than 15 total aircraft output heavy traffic message else output light message.
-			if (helicopters < planes || total > 15)
-				cout << "You saw heavy traffic totay!" << endl;
+			// Week 6 - Use enum to determine aircraft traffic
+			TrafficLevel traffic;
+
+			if (total >= 15)
+				traffic = HEAVY;
+			else if (total >= 5)
+				traffic = MODERATE;
 			else
+				traffic = LIGHT;
+
+			switch (traffic)
+			{
+			case LIGHT:
 				cout << "Nice! Traffic seemed light today." << endl;
+				break;
+
+			case MODERATE:
+				cout << "You saw moderate aircraft traffic today." << endl;
+				break;
+
+			case HEAVY:
+				cout << "You saw heavy aircraft traffic today!" << endl;
+				break;
+			}
 			break;
+		}
 		case 2: // Instructions
 			cout << "Instructions:" << endl;
 			cout << "Enter the count of planes and helicopters that you observed. Make sure to enter planes first and then helicopters after with a SPACE inbetween the two numbers. " << endl;
 			cout << "Then enter your current city/location(With no spaces), followed by how long you were outside for. In hours(e.g. 1.30)" << endl;
 			cout << "Thats all the info that you need to input your report will generate after that!!" << endl;
+			// Week 6 - Observation instructions
+			cout << "\nAdditional Observations:" << endl;
+			cout << "Enter the number of aircraft seen during three "
+				<< "separate observation periods." << endl;
+			cout << "These counts are added together and shown separately "
+				<< "from your original plane and helicopter total." << endl;
 			break;
 		case 3: // Exit
 			cout << "Goodbye, " << name << "!" << endl;
